@@ -10,14 +10,14 @@ public class CameraController : MonoBehaviour
     public List<Transform> cameraPos = new List<Transform>();
     private int currIndex = 0;
     private bool isMoving = false;
+    private float _t;
 
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 lTargetDir = testTarget.position - cam.transform.position;
-        lTargetDir.y = 0.0f;
-        cam.transform.rotation = Quaternion.RotateTowards(cam.transform.rotation, Quaternion.LookRotation(lTargetDir), Time.time * speed);
+        StartCoroutine(RotateCamera());
+
 
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
@@ -69,6 +69,39 @@ public class CameraController : MonoBehaviour
         }
 
         isMoving = false;
+
+    }
+
+    IEnumerator RotateCamera()
+    {
+
+        float lerpTime = 5f;
+        float currentLerpTime = 0f;
+
+        Vector3 relativePos = testTarget.position - cam.transform.position;
+        Quaternion rotation = Quaternion.LookRotation(relativePos);
+        Quaternion current = cam.transform.localRotation;
+
+        while (lerpTime > 0)
+        {
+            lerpTime -= Time.deltaTime;
+            currentLerpTime += Time.deltaTime;
+
+            if (currentLerpTime > lerpTime)
+            {
+                currentLerpTime = lerpTime;
+            }
+
+            float t = currentLerpTime / lerpTime;
+            t = t * t * t * (t * (6f * t - 15f) + 10f); //Calculates the speed somehow
+
+            cam.transform.localRotation = Quaternion.Slerp(current, rotation, t);
+
+            yield return null;
+
+            relativePos = testTarget.position - cam.transform.position;
+            rotation = Quaternion.LookRotation(relativePos);
+        }
 
     }
 
