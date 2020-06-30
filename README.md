@@ -1,5 +1,5 @@
-# solar_system
+# Solar system
 
-Simple solar system where you move in between the planets.
+A simple solar system where you move in between the planets developed with Unity3D.
 
-Use right and left arrow to move.
+Use right and left arrow to move in runtime.
